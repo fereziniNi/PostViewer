@@ -12,4 +12,7 @@ interface PostApiService {
 
     @GET("posts/{id}/comments")
     suspend fun getCommentsByPostId(@Path("id") postId: Int): List<CommentDto>
+
+    @GET("comments")
+    suspend fun getAllComments(): List<CommentDto>
 }

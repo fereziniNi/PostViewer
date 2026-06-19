@@ -1,12 +1,15 @@
-package br.edu.ifsp.scl.sc3044025.postviewer.ui.screens.postlist
+﻿package br.edu.ifsp.scl.sc3044025.postviewer.ui.screens.postlist
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -47,7 +50,11 @@ fun PostListScreen(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
                 is PostListUiState.Success -> {
-                    PostList(posts = state.posts, onPostClick = onPostClick)
+                    PostList(
+                        posts = state.posts,
+                        commentCounts = state.commentCounts,
+                        onPostClick = onPostClick
+                    )
                 }
                 is PostListUiState.Error -> {
                     Text(
@@ -61,19 +68,27 @@ fun PostListScreen(
 }
 
 @Composable
-private fun PostList(posts: List<PostDto>, onPostClick: (Int) -> Unit) {
+private fun PostList(
+    posts: List<PostDto>,
+    commentCounts: Map<Int, Int>,
+    onPostClick: (Int) -> Unit
+) {
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(posts, key = { it.id }) { post ->
-            PostItem(post = post, onClick = { onPostClick(post.id) })
+            PostItem(
+                post = post,
+                commentCount = commentCounts[post.id] ?: 0,
+                onClick = { onPostClick(post.id) }
+            )
         }
     }
 }
 
 @Composable
-private fun PostItem(post: PostDto, onClick: () -> Unit) {
+private fun PostItem(post: PostDto, commentCount: Int, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -84,6 +99,12 @@ private fun PostItem(post: PostDto, onClick: () -> Unit) {
                 text = post.title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "Comentarios: $commentCount",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

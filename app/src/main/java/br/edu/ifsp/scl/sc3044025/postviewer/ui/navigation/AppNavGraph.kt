@@ -24,7 +24,7 @@ fun AppNavGraph(application: PostViewerApplication) {
     NavHost(navController = navController, startDestination = ROUTE_POST_LIST) {
         composable(ROUTE_POST_LIST) {
             val viewModel: PostListViewModel = viewModel(
-                factory = PostListViewModel.Factory(application.postRepository)
+                factory = PostListViewModel.Factory(application.postRepository, application.commentRepository)
             )
             PostListScreen(
                 viewModel = viewModel,

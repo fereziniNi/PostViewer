@@ -20,4 +20,7 @@ class CommentRepository(
     suspend fun addLocalComment(postId: Int, body: String) {
         localCommentDao.insert(LocalCommentEntity(postId = postId, body = body))
     }
+
+    suspend fun getCommentCounts(): Map<Int, Int> =
+        apiService.getAllComments().groupingBy { it.postId }.eachCount()
 }
