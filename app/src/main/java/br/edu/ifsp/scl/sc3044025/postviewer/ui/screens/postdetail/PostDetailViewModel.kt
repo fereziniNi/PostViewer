@@ -20,6 +20,7 @@ class PostDetailViewModel(
 
     init {
         loadApiComments()
+        observeLocalComments()
     }
 
     private fun loadApiComments() {
@@ -32,6 +33,21 @@ class PostDetailViewModel(
                     it.copy(isLoading = false, errorMessage = e.message ?: "Erro desconhecido")
                 }
             }
+        }
+    }
+
+    private fun observeLocalComments() {
+        viewModelScope.launch {
+            commentRepository.getLocalComments(postId).collect { localComments ->
+                _uiState.update { it.copy(localComments = localComments) }
+            }
+        }
+    }
+
+    fun addLocalComment(body: String) {
+        if (body.isBlank()) return
+        viewModelScope.launch {
+            commentRepository.addLocalComment(postId, body)
         }
     }
 
